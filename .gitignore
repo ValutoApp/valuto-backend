@@ -1,0 +1,13 @@
+# IntelliJ IDEA files
+.idea/
+*.iml
+
+# Gradle
+.gradle/
+**/build/
+
+# Kotlin
+.kotlin/
+
+# Local configuration
+.env

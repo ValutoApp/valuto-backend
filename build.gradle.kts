@@ -1,0 +1,74 @@
+plugins {
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.ktor)
+    alias(libs.plugins.kotlin.serialization)
+}
+
+group = "com.valutoapp"
+version = com.valutoapp.getVersionFromGitTag(rootDir)
+
+application {
+    mainClass = "io.ktor.server.netty.EngineMain"
+    applicationDefaultJvmArgs = listOf("--enable-native-access=ALL-UNNAMED")
+}
+
+val jooqDirectory = layout.buildDirectory.dir("generated-src/jooq")
+val migrationFiles = layout.projectDirectory.dir("src/main/resources/db/migration")
+
+kotlin {
+    jvmToolchain(25)
+}
+
+dependencies {
+    platform(libs.ktor.bom)
+
+    implementation(libs.ktor.server.config.yaml)
+    implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.netty)
+    implementation(libs.ktor.server.di)
+    implementation(libs.ktor.server.status.pages)
+    implementation(libs.ktor.server.content.negotiation)
+    implementation(libs.ktor.server.serialization.json)
+    implementation(libs.logback.classic)
+    implementation(libs.jooq.core)
+    implementation(libs.hikari.cp)
+
+    testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.kotest.runner.junit5)
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.kotest.assertions.ktor)
+}
+
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+}
+
+tasks.register<Exec>("composeUp") {
+    description = "Setup necessary docker containers for development"
+    environment("POSTGRES_IMAGE_VERSION", providers.gradleProperty("postgresImageVersion").get())
+    commandLine("docker", "compose", "up", "-d")
+}
+
+tasks.register<com.valutoapp.GenerateJooqTask>("generateJooq") {
+    description = "Generates JOOQ classes for database schema"
+    migrations.set(migrationFiles)
+    outputDirectory.set(jooqDirectory)
+}
+
+tasks.register<com.valutoapp.GenerateBuildInfoTask>("generateBuildInfo") {
+    description = "Generates build-info.properties with version, commit sha and date"
+    version.set(project.version.toString())
+}
+
+tasks.named("compileKotlin") {
+    dependsOn("generateJooq")
+}
+
+tasks.named("processResources") {
+    dependsOn("generateBuildInfo")
+}
+
+

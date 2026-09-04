@@ -1,0 +1,16 @@
+services:
+  database:
+    image: postgres:${POSTGRES_IMAGE_VERSION}
+    container_name: vlt-postgres
+    environment:
+      POSTGRES_DB: ${VLT_DB_NAME}
+      POSTGRES_USER: ${VLT_DB_USER}
+      POSTGRES_PASSWORD: ${VLT_DB_PASSWORD}
+    ports:
+      - "5432:${VLT_DB_PORT}"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
