@@ -3,6 +3,8 @@ package com.valutoapp
 import org.flywaydb.core.Flyway
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
@@ -26,6 +28,15 @@ abstract class GenerateJooqTask : DefaultTask() {
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
 
+    @get:Input
+    abstract val postgresImageVersion: Property<String>
+
+    init {
+        migrations.set(project.layout.projectDirectory.dir("src/main/resources/db/migration"))
+        outputDirectory.set(project.layout.buildDirectory.dir("generated-src/jooq"))
+        postgresImageVersion.set(project.providers.gradleProperty("postgresImageVersion"))
+    }
+
     @TaskAction
     internal fun taskAction() {
         initializeContainer().use { container ->
@@ -35,8 +46,7 @@ abstract class GenerateJooqTask : DefaultTask() {
     }
 
     private fun initializeContainer(): PostgreSQLContainer {
-        val containerVersion: String = project.providers.gradleProperty("postgresImageVersion").get()
-        val container = PostgreSQLContainer("postgres:${containerVersion}")
+        val container = PostgreSQLContainer("postgres:${postgresImageVersion.get()}")
         container.start()
         return container
     }

@@ -5,6 +5,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.time.OffsetDateTime
@@ -16,10 +17,15 @@ abstract class GenerateBuildInfoTask : DefaultTask() {
     @get:Input
     abstract val version: Property<String>
 
+    @get:Internal
+    abstract val projectDirectory: DirectoryProperty
+
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
 
     init {
+        version.set(project.version.toString())
+        projectDirectory.set(project.layout.projectDirectory)
         outputDirectory.set(project.layout.buildDirectory.dir("resources/main"))
     }
 
@@ -43,7 +49,7 @@ abstract class GenerateBuildInfoTask : DefaultTask() {
 
     private fun gitCommand(vararg cmd: String): String {
         val process = ProcessBuilder(*cmd)
-            .directory(project.rootDir)
+            .directory(projectDirectory.asFile.get())
             .redirectErrorStream(true)
             .start()
         val output = process.inputStream.bufferedReader().readText().trim()

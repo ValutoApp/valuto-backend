@@ -16,6 +16,10 @@ val jooqDirectory = layout.buildDirectory.dir("generated-src/jooq")
 val migrationFiles = layout.projectDirectory.dir("src/main/resources/db/migration")
 
 kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
+        allWarningsAsErrors.set(true)
+    }
     jvmToolchain(25)
 }
 
@@ -54,13 +58,10 @@ tasks.register<Exec>("composeUp") {
 
 tasks.register<com.valutoapp.GenerateJooqTask>("generateJooq") {
     description = "Generates JOOQ classes for database schema"
-    migrations.set(migrationFiles)
-    outputDirectory.set(jooqDirectory)
 }
 
 tasks.register<com.valutoapp.GenerateBuildInfoTask>("generateBuildInfo") {
     description = "Generates build-info.properties with version, commit sha and date"
-    version.set(project.version.toString())
 }
 
 tasks.named("compileKotlin") {
