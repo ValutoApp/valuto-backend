@@ -8,6 +8,9 @@ jooq = "3.21.6"
 hikari-cp = "7.1.0"
 testcontainers = "2.0.5"
 kotest = "6.2.4"
+ktlint-core = "1.8.0"
+ktlint-plugin = "14.2.0"
+detekt = "2.0.0-alpha.6"
 
 [libraries]
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
@@ -35,3 +38,5 @@ kotest-assertions-ktor = { module = "io.kotest:kotest-assertions-ktor", version.
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-plugin" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
