@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.detekt)
 }
 
 group = "com.valutoapp"
@@ -12,15 +14,16 @@ application {
     applicationDefaultJvmArgs = listOf("--enable-native-access=ALL-UNNAMED")
 }
 
-val jooqDirectory = layout.buildDirectory.dir("generated-src/jooq")
-val migrationFiles = layout.projectDirectory.dir("src/main/resources/db/migration")
-
 kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
         allWarningsAsErrors.set(true)
     }
     jvmToolchain(25)
+}
+
+ktlint {
+    version.set(libs.versions.ktlint.core)
 }
 
 dependencies {
@@ -71,5 +74,3 @@ tasks.named("compileKotlin") {
 tasks.named("processResources") {
     dependsOn("generateBuildInfo")
 }
-
-

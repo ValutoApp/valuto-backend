@@ -13,4 +13,3 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "valuto-backend"
-
