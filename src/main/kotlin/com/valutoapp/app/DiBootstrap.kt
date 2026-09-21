@@ -1,0 +1,14 @@
+package com.valutoapp.app
+
+import com.valutoapp.config.di.configModule
+import com.valutoapp.config.di.environmentModule
+import com.valutoapp.config.di.persistenceModule
+import io.ktor.server.application.Application
+import io.ktor.server.plugins.di.dependencies
+
+fun Application.configureDI() {
+    val config = environment.config
+    dependencies.configModule(config)
+    dependencies.environmentModule()
+    dependencies.persistenceModule()
+}
