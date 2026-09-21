@@ -1,3 +1,18 @@
 ktor:
   deployment:
     port: ${VLT_PORT}
+  application:
+    modules:
+      - com.valutoapp.ApplicationKt.module
+
+app:
+  environment: ${VLT_ENVIRONMENT}
+  deployment: ${VLT_DEPLOYMENT}
+
+database:
+  host: ${VLT_DB_HOST}
+  port: ${VLT_DB_PORT}
+  name: ${VLT_DB_NAME}
+  username: ${VLT_DB_USER}
+  password: ${VLT_DB_PASSWORD}
+  maximumPoolSize: 10

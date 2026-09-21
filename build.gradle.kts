@@ -10,8 +10,13 @@ group = "com.valutoapp"
 version = com.valutoapp.getVersionFromGitTag(rootDir)
 
 application {
-    mainClass = "io.ktor.server.netty.EngineMain"
-    applicationDefaultJvmArgs = listOf("--enable-native-access=ALL-UNNAMED")
+    mainClass = "com.valutoapp.ApplicationKt"
+    applicationDefaultJvmArgs =
+        listOf(
+            "--enable-native-access=ALL-UNNAMED",
+            "-Dorg.jooq.no-logo=true",
+            "-Dorg.jooq.no-tips=true",
+        )
 }
 
 kotlin {
@@ -20,10 +25,19 @@ kotlin {
         allWarningsAsErrors.set(true)
     }
     jvmToolchain(25)
+
+    sourceSets {
+        main {
+            kotlin.srcDir(layout.buildDirectory.dir("generated-src/jooq"))
+        }
+    }
 }
 
 ktlint {
     version.set(libs.versions.ktlint.core)
+    filter {
+        exclude { element -> element.file.path.contains("generated-src") }
+    }
 }
 
 dependencies {
@@ -36,9 +50,15 @@ dependencies {
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.server.serialization.json)
+    implementation(libs.ktor.server.call.id)
+    implementation(libs.ktor.server.call.logging)
     implementation(libs.logback.classic)
+    implementation(libs.kotlin.logging)
     implementation(libs.jooq.core)
     implementation(libs.hikari.cp)
+    implementation(libs.postgresql.driver)
+    implementation(libs.flyway.core)
+    implementation(libs.flyway.postgres)
 
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotest.runner.junit5)
@@ -69,6 +89,10 @@ tasks.register<com.valutoapp.GenerateBuildInfoTask>("generateBuildInfo") {
 
 tasks.named("compileKotlin") {
     dependsOn("generateJooq")
+}
+
+tasks.named("runKtlintCheckOverMainSourceSet") {
+    mustRunAfter("generateJooq")
 }
 
 tasks.named("processResources") {
