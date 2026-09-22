@@ -16,3 +16,6 @@ database:
   username: ${VLT_DB_USER}
   password: ${VLT_DB_PASSWORD}
   maximumPoolSize: 10
+
+security:
+  hashPepper: ${VLT_PEPPER}

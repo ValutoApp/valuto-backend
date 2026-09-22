@@ -7,23 +7,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jooq.DSLContext
 
-internal class JooqTx(
-    val dsl: DSLContext,
-) : Tx
+internal class JooqTx(val dsl: DSLContext) : Tx
 
 class JooqTransactionManager(
     private val dsl: DSLContext,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : TransactionManager {
-    override suspend fun <T> query(block: Tx.() -> T): T =
-        withContext(dispatcher) {
-            JooqTx(dsl).block()
-        }
+    override suspend fun <T> query(block: Tx.() -> T): T = withContext(dispatcher) {
+        JooqTx(dsl).block()
+    }
 
-    override suspend fun <T> transaction(block: Tx.() -> T): T =
-        withContext(dispatcher) {
-            dsl.transactionResult { config ->
-                JooqTx(config.dsl()).block()
-            }
+    override suspend fun <T> transaction(block: Tx.() -> T): T = withContext(dispatcher) {
+        dsl.transactionResult { config ->
+            JooqTx(config.dsl()).block()
         }
+    }
 }

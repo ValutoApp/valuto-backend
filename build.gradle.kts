@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.kotlin.logging)
     implementation(libs.jooq.core)
     implementation(libs.hikari.cp)
+    implementation(libs.password4j)
     implementation(libs.postgresql.driver)
     implementation(libs.flyway.core)
     implementation(libs.flyway.postgres)

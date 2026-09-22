@@ -1,2 +1,2 @@
 [*.{kt,kts}]
-max_line_length = 200
+ktlint_code_style = intellij_idea

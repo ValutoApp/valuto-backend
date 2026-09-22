@@ -2,6 +2,7 @@ package com.valutoapp
 
 import com.valutoapp.app.configureDI
 import com.valutoapp.app.configureLogging
+import com.valutoapp.app.configureRouting
 import com.valutoapp.app.configureSerialization
 import com.valutoapp.app.configureStatusPages
 import com.valutoapp.app.runStartupTasks
@@ -18,4 +19,5 @@ fun Application.module() {
     configureSerialization()
     configureStatusPages()
     runStartupTasks()
+    configureRouting()
 }
