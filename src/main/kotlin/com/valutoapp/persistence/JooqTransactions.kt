@@ -7,8 +7,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jooq.DSLContext
 
-internal class JooqTx(val dsl: DSLContext) : Tx
-
 class JooqTransactionManager(
     private val dsl: DSLContext,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -23,3 +21,5 @@ class JooqTransactionManager(
         }
     }
 }
+
+internal class JooqTx(val dsl: DSLContext) : Tx

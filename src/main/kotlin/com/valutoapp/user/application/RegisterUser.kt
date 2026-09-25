@@ -11,6 +11,20 @@ import com.valutoapp.user.domain.Email
 import com.valutoapp.user.domain.ParsedEmail
 import com.valutoapp.user.domain.User
 import com.valutoapp.user.port.UserRepository
+import java.util.UUID
+
+data class RegisterUserCommand(
+    val email: String,
+    val plainPassword: String,
+)
+
+sealed interface RegisterUserResult {
+    data class Success(val userId: UUID) : RegisterUserResult
+
+    data class EmailTaken(val email: Email) : RegisterUserResult
+
+    data class InvalidInput(val email: ParsedEmail, val password: ParsedPlainPassword) : RegisterUserResult
+}
 
 class RegisterUserUseCase(
     private val userRepository: UserRepository,
