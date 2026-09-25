@@ -7,6 +7,12 @@ private const val HASH_ITERATIONS_KEY = "security.hashIterations"
 private const val HASH_PARALLELISM_KEY = "security.hashParallelism"
 private const val HASH_LENGTH_KEY = "security.hashLength"
 
+private const val DEFAULT_HASH_SALT_LENGTH = 16
+private const val DEFAULT_HASH_MEMORY_MB = 65_536
+private const val DEFAULT_HASH_ITERATIONS = 5
+private const val DEFAULT_HASH_PARALLELISM = 2
+private const val DEFAULT_HASH_LENGTH = 32
+
 data class SecuritySettings(
     val pepper: String,
     val saltLength: Int,
@@ -19,21 +25,12 @@ data class SecuritySettings(
 class SecuritySettingsReader(
     private val properties: PropertyReader,
 ) {
-    fun read(): SecuritySettings {
-        val pepper = properties.requiredString(HASH_PEPPER_KEY)
-        val saltLength = properties.optionalInt(HASH_SALT_LENGTH_KEY, 16)
-        val memoryKb = properties.optionalInt(HASH_MEMORY_KEY, 65_536)
-        val iterations = properties.optionalInt(HASH_ITERATIONS_KEY, 5)
-        val parallelism = properties.optionalInt(HASH_PARALLELISM_KEY, 2)
-        val outputLength = properties.optionalInt(HASH_LENGTH_KEY, 32)
-
-        return SecuritySettings(
-            pepper,
-            saltLength,
-            memoryKb,
-            iterations,
-            parallelism,
-            outputLength,
-        )
-    }
+    fun read() = SecuritySettings(
+        pepper = properties.requiredString(HASH_PEPPER_KEY),
+        saltLength = properties.optionalInt(HASH_SALT_LENGTH_KEY, DEFAULT_HASH_SALT_LENGTH),
+        memoryKb = properties.optionalInt(HASH_MEMORY_KEY, DEFAULT_HASH_MEMORY_MB),
+        iterations = properties.optionalInt(HASH_ITERATIONS_KEY, DEFAULT_HASH_ITERATIONS),
+        parallelism = properties.optionalInt(HASH_PARALLELISM_KEY, DEFAULT_HASH_PARALLELISM),
+        outputLength = properties.optionalInt(HASH_LENGTH_KEY, DEFAULT_HASH_LENGTH),
+    )
 }

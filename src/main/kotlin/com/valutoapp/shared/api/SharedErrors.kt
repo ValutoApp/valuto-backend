@@ -10,6 +10,10 @@ object SharedErrors {
         violations,
     )
 
+    fun validationFailed(vararg fieldWithMessage: Pair<String, String?>): ApiError = validationFailed(
+        fieldWithMessage.mapNotNull { (field, message) -> message?.let { FieldViolation(field, message) } },
+    )
+
     fun invalidBody() = ApiError(
         status = HttpStatusCode.BadRequest,
         code = ErrorCode.INVALID_BODY,
